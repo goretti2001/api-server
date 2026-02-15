@@ -21,12 +21,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 var mongoose = require("mongoose");
-mongoose.connect("mongodb+srv://Michelle:Tazman2001@cluster0.ywzsmjh.mongodb.net/Artiklar?appName=Cluster0");
+
+// Hämta URI från miljövariabel, fallback till din lokala dev om den inte finns
+const mongoURI = process.env.MONGO_URI || "mongodb+srv://Michelle:Tazman2001@cluster0.ywzsmjh.mongodb.net/Artiklar?appName=Cluster0";
+
+mongoose.connect(mongoURI, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+});
+
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function (callback) {
 	console.log("Kopplingen lyckades!");
 });
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
